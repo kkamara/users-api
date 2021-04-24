@@ -21,6 +21,7 @@ func main() {
 	api.Get("/users", handlers.GetUsers)
 	api.Put("/users/:username", handlers.PutUser)
 	api.Put("/users/:username/darkmode", handlers.PutToggleDarkMode)
+	api.Delete("/users/:username", handlers.DeleteUser)
 
 	app.Listen(":3000")
 }

@@ -81,3 +81,14 @@ func GetAll() (users []*userSchema.UserSchema, err error) {
 	err = res.Error
 	return
 }
+
+func DelUser(username string) (err error) {
+	db, err := config.OpenDB()
+	if nil != err {
+		panic(err)
+	}
+	var schema *userSchema.UserSchema
+	res := db.Where("username = ?", username).Delete(&schema)
+	err = res.Error
+	return
+}
