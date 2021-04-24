@@ -18,8 +18,9 @@ func main() {
 	api := app.Group("/api")
 
 	api.Post("/users", handlers.PostUser)
-	api.Put("/users/:username", handlers.PutUser)
 	api.Get("/users", handlers.GetUsers)
+	api.Put("/users/:username", handlers.PutUser)
+	api.Put("/users/:username/darkmode", handlers.PutToggleDarkMode)
 
 	app.Listen(":3000")
 }

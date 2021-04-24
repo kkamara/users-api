@@ -57,6 +57,23 @@ func PutUser(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"data": &newUser})
 }
 
+func PutToggleDarkMode(c *fiber.Ctx) error {
+	user, err := userModel.Get(c.Params("username"))
+	if err != nil {
+		c.Context().SetStatusCode(404)
+		return c.JSON(fiber.Map{"error": "Resource does not exist."})
+	}
+
+	user.DarkMode = !user.DarkMode
+
+	newUser, err := userModel.Update(user.Username, user)
+	if err != nil {
+		c.Context().SetStatusCode(500)
+		return c.JSON(fiber.Map{"error": "Unknown error encountered when saving resource."})
+	}
+	return c.JSON(fiber.Map{"data": &newUser})
+}
+
 func GetUsers(c *fiber.Ctx) error {
 	users, err := userModel.GetAll()
 	if err != nil {

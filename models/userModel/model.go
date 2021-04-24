@@ -63,7 +63,10 @@ func Update(username string, updateUser *userSchema.UserSchema) (user *userSchem
 		LastName:  updateUser.LastName,
 		DarkMode:  updateUser.DarkMode,
 	}
-	res := db.Model(&userSchema.UserSchema{}).Where("username = ?", username).Updates(newUser)
+	var schema *userSchema.UserSchema
+	res := db.Model(&schema).Select(
+		"first_name", "last_name", "dark_mode",
+	).Where("username = ?", username).Updates(newUser)
 	user = updateUser
 	err = res.Error
 	return
