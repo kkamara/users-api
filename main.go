@@ -18,6 +18,7 @@ func main() {
 	api := app.Group("/api")
 
 	api.Post("/users", handlers.PostUser)
+	api.Put("/users/:username", handlers.PutUser)
 
 	app.Listen(":3000")
 }

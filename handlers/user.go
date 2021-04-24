@@ -32,3 +32,28 @@ func PostUser(c *fiber.Ctx) error {
 	}
 	return c.JSON(fiber.Map{"data": &newUser})
 }
+
+func PutUser(c *fiber.Ctx) error {
+	user, err := userModel.Get(c.Params("username"))
+	if err != nil {
+		c.Context().SetStatusCode(404)
+		return c.JSON(fiber.Map{"error": "Resource does not exist."})
+	}
+	if err := c.BodyParser(user); err != nil {
+		c.Context().SetStatusCode(500)
+		return c.JSON(fiber.Map{"error": "Error encountered when parsing request input."})
+	}
+
+	errors := userModel.ValidateUpdate(user)
+	if len(errors) > 0 {
+		c.Context().SetStatusCode(400)
+		return c.JSON(fiber.Map{"errors": errors})
+	}
+	newUser, err := userModel.Update(user.Username, user)
+	if err != nil {
+		c.Context().SetStatusCode(500)
+		return c.JSON(fiber.Map{"error": "Unknown error encountered when saving resource."})
+	}
+	return c.JSON(fiber.Map{"data": &newUser})
+}
+

@@ -9,6 +9,16 @@ import (
 	"github.com/kkamara/users-api/schemas/userSchema"
 )
 
+func Get(username string) (user *userSchema.UserSchema, err error) {
+	db, err := config.OpenDB()
+	if nil != err {
+		panic(err)
+	}
+	res := db.Where("username = ?", username).First(&user)
+	err = res.Error
+	return
+}
+
 func GenerateUsername(first_name, last_name string) string {
 	p, _ := rand.Prime(rand.Reader, 64)
 	return fmt.Sprintf(
@@ -28,6 +38,10 @@ func ValidateCreate(newUser *userSchema.UserSchema) (errors []string) {
 	return
 }
 
+func ValidateUpdate(newUser *userSchema.UserSchema) (errors []string) {
+	return ValidateCreate(newUser)
+}
+
 func Create(newUser *userSchema.UserSchema) (user *userSchema.UserSchema, err error) {
 	db, err := config.OpenDB()
 	if nil != err {
@@ -38,3 +52,20 @@ func Create(newUser *userSchema.UserSchema) (user *userSchema.UserSchema, err er
 	err = res.Error
 	return
 }
+
+func Update(username string, updateUser *userSchema.UserSchema) (user *userSchema.UserSchema, err error) {
+	db, err := config.OpenDB()
+	if nil != err {
+		panic(err)
+	}
+	newUser := &userSchema.UserSchema{
+		FirstName: updateUser.FirstName,
+		LastName:  updateUser.LastName,
+		DarkMode:  updateUser.DarkMode,
+	}
+	res := db.Model(&userSchema.UserSchema{}).Where("username = ?", username).Updates(newUser)
+	user = updateUser
+	err = res.Error
+	return
+}
+
