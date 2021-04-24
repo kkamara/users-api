@@ -8,8 +8,6 @@ import (
 	"github.com/kkamara/users-api/schemas/userSchema"
 )
 
-var err error
-
 func PostUser(c *fiber.Ctx) error {
 	user := new(userSchema.UserSchema)
 	if err := c.BodyParser(user); err != nil {
