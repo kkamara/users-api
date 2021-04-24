@@ -19,6 +19,7 @@ func main() {
 
 	api.Post("/users", handlers.PostUser)
 	api.Put("/users/:username", handlers.PutUser)
+	api.Get("/users", handlers.GetUsers)
 
 	app.Listen(":3000")
 }

@@ -69,3 +69,12 @@ func Update(username string, updateUser *userSchema.UserSchema) (user *userSchem
 	return
 }
 
+func GetAll() (users []*userSchema.UserSchema, err error) {
+	db, err := config.OpenDB()
+	if nil != err {
+		panic(err)
+	}
+	res := db.Find(&users)
+	err = res.Error
+	return
+}
