@@ -92,3 +92,17 @@ func DelUser(username string) (err error) {
 	err = res.Error
 	return
 }
+
+func FindUsers(query string) (users []*userSchema.UserSchema, err error) {
+	db, err := config.OpenDB()
+	if nil != err {
+		panic(err)
+	}
+	formattedQuery := fmt.Sprintf("%%%s%%", query)
+	res := db.Where(
+		"first_name || ' ' || last_name LIKE ?",
+		formattedQuery,
+	).Find(&users)
+	err = res.Error
+	return
+}

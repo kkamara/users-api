@@ -19,6 +19,7 @@ func main() {
 
 	api.Post("/users", handlers.PostUser)
 	api.Get("/users", handlers.GetUsers)
+	api.Get("/users/search", handlers.SearchUsers)
 	api.Put("/users/:username", handlers.PutUser)
 	api.Put("/users/:username/darkmode", handlers.PutToggleDarkMode)
 	api.Delete("/users/:username", handlers.DeleteUser)

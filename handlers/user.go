@@ -92,3 +92,12 @@ func DeleteUser(c *fiber.Ctx) error {
 	}
 	return c.JSON(fiber.Map{"message": "Success"})
 }
+
+func SearchUsers(c *fiber.Ctx) error {
+	users, err := userModel.FindUsers(c.Query("query"))
+	if err != nil {
+		c.Context().SetStatusCode(500)
+		return c.JSON(fiber.Map{"error": "Unknown error encountered when saving resource."})
+	}
+	return c.JSON(fiber.Map{"data": users})
+}
