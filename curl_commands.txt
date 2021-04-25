@@ -1,0 +1,31 @@
+
+Post users
+curl --location --request POST 'localhost:3000/api/users' \
+    --header 'Content-Type: application/json' \
+    --data-raw '{
+        "first_name": "john",
+        "last_name": "doe"
+    }'
+
+Get users
+curl --location --request GET 'localhost:3000/api/users' \
+    --header 'Authorization: :token'
+
+Find users
+curl --location --request GET 'localhost:3000/api/users/search?query=jane%20doe'
+
+Update user
+curl --location --request PATCH 'localhost:3000/api/users/:username' \
+    --header 'Authorization: :token' \
+    --header 'Content-Type: application/json' \
+    --data-raw '{
+        "first_name": "Mary",
+        "last_name": "Moppins",
+        "dark_mode": true
+    }'
+
+Toggle dark models
+curl --location --request PUT 'localhost:3000/api/users/:username/darkmode'
+
+Delete user
+curl --location --request DELETE 'localhost:3000/api/users/:username'
