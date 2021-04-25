@@ -40,7 +40,8 @@ func TestPostUser(t *testing.T) {
 	if resp.StatusCode == expectedStatus {
 		body, _ := ioutil.ReadAll(resp.Body)
 		var res struct {
-			Data userSchema.UserSchema `json:"data"`
+			Data  userSchema.UserSchema `json:"data"`
+			token string
 		}
 		err := json.Unmarshal(body, &res)
 		if err != nil {
