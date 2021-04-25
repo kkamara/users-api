@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/kkamara/users-api/handlers"
@@ -14,6 +16,21 @@ func main() {
 	app.Use(func(c *fiber.Ctx) error {
 		c.Accepts("application/json")
 		return c.Next()
+	})
+	app.Use(func(c *fiber.Ctx) error {
+		if c.OriginalURL() == "/api/users" && c.Method() == "POST" {
+			return c.Next()
+		}
+		if authKey := c.Get("Authorization"); len(authKey) > 0 {
+			_, err := userModel.VerifyAuthToken(authKey)
+			if err != nil {
+				fmt.Printf("%v", err)
+				return c.JSON(fiber.Map{"error": "Unauthorized"})
+			}
+			return c.Next()
+		}
+		c.Context().SetStatusCode(401)
+		return c.JSON(fiber.Map{"error": "Unauthorized"})
 	})
 
 	err := userModel.Seed()

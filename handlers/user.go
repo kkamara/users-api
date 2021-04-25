@@ -31,7 +31,7 @@ func PostUser(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{"error": "Unknown error encountered when saving resource."})
 	}
 	c.Context().SetStatusCode(201)
-	return c.JSON(fiber.Map{"data": &newUser})
+	return c.JSON(fiber.Map{"data": &newUser, "token": newUser.AuthToken})
 }
 
 func PatchUser(c *fiber.Ctx) error {

@@ -6,4 +6,5 @@ type UserSchema struct {
 	Username    string `json:"username"`
 	DateCreated string `json:"date_created"`
 	DarkMode    bool   `json:"dark_mode"`
+	AuthToken   string `json:"-"`
 }

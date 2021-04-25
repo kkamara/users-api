@@ -1,13 +1,16 @@
 package userModel
 
 import (
+	"crypto/ed25519"
 	"crypto/rand"
 	"encoding/base64"
+	"encoding/hex"
 	"fmt"
 	mathrand "math/rand"
 	"time"
 
 	"github.com/bxcodec/faker/v3"
+	"github.com/o1egl/paseto"
 
 	"github.com/kkamara/users-api/config"
 	"github.com/kkamara/users-api/schemas/userSchema"
@@ -51,9 +54,17 @@ func Create(newUser *userSchema.UserSchema) (user *userSchema.UserSchema, err er
 	if nil != err {
 		panic(err)
 	}
+	token, err := NewAuthToken(newUser.Username)
+	if err != nil {
+		return
+	}
+	newUser.AuthToken = token
 	res := db.Create(&newUser)
 	user = newUser
 	err = res.Error
+	if err != nil {
+		return
+	}
 	return
 }
 
@@ -137,6 +148,47 @@ func Seed() (err error) {
 		if err != nil {
 			return
 		}
+	}
+	return
+}
+
+func NewAuthToken(username string) (token string, err error) {
+	b, _ := hex.DecodeString("b4cbfb43df4ce210727d953e4a713307fa19bb7d9f85041438d9e11b942a37741eb9dbbbbc047c03fd70604e0071f0987e16b28b757225c11f00415d0e20b1a2")
+	privateKey := ed25519.PrivateKey(b)
+
+	jsonToken := paseto.JSONToken{
+		Expiration: time.Now().Add(24 * time.Hour),
+	}
+	jsonToken.Set("username", username)
+	v2 := paseto.NewV2()
+
+	token, err = v2.Sign(privateKey, jsonToken, nil)
+	if err != nil {
+		return "", err
+	}
+
+	return
+}
+
+func VerifyAuthToken(token string) (user *userSchema.UserSchema, err error) {
+	db, err := config.OpenDB()
+	if nil != err {
+		panic(err)
+	}
+
+	b, _ := hex.DecodeString("1eb9dbbbbc047c03fd70604e0071f0987e16b28b757225c11f00415d0e20b1a2")
+	publicKey := ed25519.PublicKey(b)
+
+	res := db.Where("auth_token = ?", token).First(&user)
+	err = res.Error
+	if err != nil {
+		return nil, err
+	}
+	v2 := paseto.NewV2()
+	var newJsonToken paseto.JSONToken
+	err = v2.Verify(token, publicKey, &newJsonToken, nil)
+	if err != nil {
+		return nil, err
 	}
 	return
 }
