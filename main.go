@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	app := fiber.New()
+	app := *fiber.New()
 
 	app.Use(logger.New())
 	app.Use(func(c *fiber.Ctx) error {
@@ -20,7 +20,7 @@ func main() {
 	api.Post("/users", handlers.PostUser)
 	api.Get("/users", handlers.GetUsers)
 	api.Get("/users/search", handlers.SearchUsers)
-	api.Put("/users/:username", handlers.PutUser)
+	api.Patch("/users/:username", handlers.PatchUser)
 	api.Put("/users/:username/darkmode", handlers.PutToggleDarkMode)
 	api.Delete("/users/:username", handlers.DeleteUser)
 

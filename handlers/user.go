@@ -34,7 +34,7 @@ func PostUser(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"data": &newUser})
 }
 
-func PutUser(c *fiber.Ctx) error {
+func PatchUser(c *fiber.Ctx) error {
 	user, err := userModel.Get(c.Params("username"))
 	if err != nil {
 		c.Context().SetStatusCode(404)
