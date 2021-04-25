@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/kkamara/users-api/handlers"
+	"github.com/kkamara/users-api/models/userModel"
 )
 
 func main() {
@@ -14,6 +15,11 @@ func main() {
 		c.Accepts("application/json")
 		return c.Next()
 	})
+
+	err := userModel.Seed()
+	if err != nil {
+		panic(err)
+	}
 
 	api := app.Group("/api")
 

@@ -4,6 +4,10 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"fmt"
+	mathrand "math/rand"
+	"time"
+
+	"github.com/bxcodec/faker/v3"
 
 	"github.com/kkamara/users-api/config"
 	"github.com/kkamara/users-api/schemas/userSchema"
@@ -104,5 +108,35 @@ func FindUsers(query string) (users []*userSchema.UserSchema, err error) {
 		formattedQuery,
 	).Find(&users)
 	err = res.Error
+	return
+}
+
+func Seed() (err error) {
+	users, err := GetAll()
+	if err != nil {
+		return
+	}
+	if len(users) != 0 {
+		return nil
+	}
+	for count := 0; count < 5; count++ {
+		const createdFormat = "2006-01-02 15:04:05"
+		user := &userSchema.UserSchema{
+			FirstName:   faker.FirstName(),
+			LastName:    faker.LastName(),
+			DateCreated: time.Now().Format(createdFormat),
+		}
+		user.Username = GenerateUsername(user.FirstName, user.LastName)
+
+		if randomInt := mathrand.Intn(2); randomInt == 0 {
+			user.DarkMode = true
+		} else {
+			user.DarkMode = false
+		}
+		_, err = Create(user)
+		if err != nil {
+			return
+		}
+	}
 	return
 }
