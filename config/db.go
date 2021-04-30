@@ -8,6 +8,9 @@ import (
 
 func OpenDB() (db *gorm.DB, err error) {
 	db, err = gorm.Open(sqlite.Open("gorm.db"), &gorm.Config{PrepareStmt: true})
+	if err != nil {
+		return
+	}
 
 	db.AutoMigrate(&userSchema.UserSchema{})
 	return
