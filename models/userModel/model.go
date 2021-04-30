@@ -61,8 +61,7 @@ func Create(newUser *userSchema.UserSchema) (user *userSchema.UserSchema, err er
 	newUser.AuthToken = token
 	res := db.Create(&newUser)
 	user = newUser
-	err = res.Error
-	if err != nil {
+	if err = res.Error; err != nil {
 		return
 	}
 	return
@@ -180,8 +179,7 @@ func VerifyAuthToken(token string) (user *userSchema.UserSchema, err error) {
 	publicKey := ed25519.PublicKey(b)
 
 	res := db.Where("auth_token = ?", token).First(&user)
-	err = res.Error
-	if err != nil {
+	if err = res.Error; err != nil {
 		return nil, err
 	}
 	v2 := paseto.NewV2()
